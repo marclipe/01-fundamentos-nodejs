@@ -2,25 +2,41 @@ import http from 'node:http'
 
 const users = []
 
-const server = http.createServer((req, res) => {
-    const {method, url} = req
+const server = http.createServer(async(req, res) => {
+	const {method, url} = req
 
-    if(method === 'GET' && url === '/users') {
-        return res
-        .setHeader('Content-type', 'application/json')
-        .end(JSON.stringify(users))
-    } 
+	const buffers = []
 
-    if(method === 'POST' && url === '/users') {
-        users.push({
-          id: 1,
-          name: "John Doe",
-          email: "johndoe@example.com",
-        });
-        return res.writeHead(201).end()
-    }
+	for await (const chunk of req) {
+		buffers.push(chunk)
+	}
 
-    return res.writeHead(404).end()
+	try {
+		req.body = JSON.parse(Buffer.concat(buffers).toString()) //adiciono o body dentro do req
+		console.log(req.body)
+	} catch {
+		req.body = null
+	}
+
+	if(method === 'GET' && url === '/users') {
+		return res
+		.setHeader('Content-type', 'application/json')
+		.end(JSON.stringify(users))
+	} 
+
+	if(method === 'POST' && url === '/users') {
+		//uso o corpo da nossa requisição 
+		const { name, email } = req.body
+
+		users.push({
+			id: 1,
+			name,
+			email
+		});
+		return res.writeHead(201).end()
+	}
+
+	return res.writeHead(404).end()
 })
 
 server.listen(3333)
