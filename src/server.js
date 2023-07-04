@@ -1,7 +1,9 @@
 import http from 'node:http'
 import { json } from './middlewares/json.js'
+import { Database } from './database.js'
 
-const users = []
+//no lugar de user, agora database
+const database = new Database
 
 const server = http.createServer(async(req, res) => {
 	const {method, url} = req
@@ -9,19 +11,26 @@ const server = http.createServer(async(req, res) => {
 	await json(req, res)
 
 	if(method === 'GET' && url === '/users') {
-		return res
-		.end(JSON.stringify(users))
+		//Na buscagem vou buscar a listagem de usuários na minha tabela
+		const users = database.select('users');
+
+		return res.end(JSON.stringify(users))
 	} 
 
 	if(method === 'POST' && url === '/users') {
-		//uso o corpo da nossa requisição 
 		const { name, email } = req.body
 
-		users.push({
+		//Agora variável user
+		const user = {
 			id: 1,
 			name,
 			email
-		});
+		};
+
+		//já aparece as opções para mim
+		//nome da tabela e nome da informação
+		database.insert('users', user)
+
 		return res.writeHead(201).end()
 	}
 
