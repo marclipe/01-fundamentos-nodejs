@@ -1,35 +1,23 @@
 import http from 'node:http'
-import { randomUUID } from 'node:crypto'
 import { json } from './middlewares/json.js'
-import { Database } from './database.js'
-
-const database = new Database
+import { routes } from './routes.js'
 
 const server = http.createServer(async(req, res) => {
-	const {method, url} = req
+  const { method, url } = req;
 
-	await json(req, res)
+  await json(req, res);
 
-	if(method === 'GET' && url === '/users') {
-		const users = database.select('users');
+  // método find() em um array chamado routes para procurar um objeto que atenda a duas condições
+  const route = routes.find((route) => {
+    return route.method === method && route.path === url;
+  });
 
-		return res.end(JSON.stringify(users))
+	//Caso eu encontre uma rota eu vou retornar handler passando o que ela precisa receber que é o req e res 
+  if(route) {
+		return route.handler(req, res)
 	} 
 
-	if(method === 'POST' && url === '/users') {
-		const { name, email } = req.body
-		const user = {
-			id: randomUUID(), //Agora podemos gerar nosso id
-			name,
-			email
-		};
-		
-		database.insert('users', user)
-
-		return res.writeHead(201).end()
-	}
-
-	return res.writeHead(404).end()
+  return res.writeHead(404).end();
 })
 
 server.listen(3333)
