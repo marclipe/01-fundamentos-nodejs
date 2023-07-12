@@ -31,6 +31,21 @@ export const routes = [
     }
   }, 
   {
+    method: 'PUT', 
+    path: buildRoutePath('/users/:id'), //continua recebendo o id de usuário pois quero saber qual usuário eu quero atualizar
+    handler: (req,res) => {
+      //Uma constante sendo req.params e a outra req.body
+      const { id } = req.params 
+      const { name, email} = req.body
+      //agora o método update, passamos o id como segundo parametro, e no terceiro parametro enviamos quais informações queremos atualizar
+      database.update('users', id, {
+        name, 
+        email
+      })
+      return res.writeHead(204).end();
+    } 
+  },
+  {
     method: 'DELETE', 
     path: buildRoutePath('/users/:id'), 
     handler: (req, res) => {

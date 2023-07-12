@@ -37,6 +37,19 @@ export class Database {
     return data;
   }
 
+  //teremos o parametro data, que é para receber os dados dos meu usuário que eu quero atualizar
+  update(table, id, data) {
+    //parecida com a delete, pois vamos buscar também pelo rowIndex para saber se essa info já existe
+    const rowIndex = this.#database[table].findIndex(row => row.id === id)
+
+    if(rowIndex > -1) {
+      //vou fazer uma substituição com o data, aproveito e mando o id junto
+      //Novamente uma tabela só no meu banco de dados
+      this.#database[table][rowIndex] = {id, ...data}
+      this.#persist()
+    }
+  }
+
   delete(table, id) {
     const rowIndex = this.#database[table].findIndex(row => row.id === id)
 
