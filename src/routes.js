@@ -1,6 +1,6 @@
 import { Database } from "./database.js";
 import { randomUUID } from "node:crypto";
-import { buildRoutePath } from "./middlewares/utils/build-route-path.js";
+import { buildRoutePath } from "./utils/build-route-path.js";
 
 const database = new Database()
 
@@ -9,6 +9,8 @@ export const routes = [
     method: 'GET', 
     path: buildRoutePath('/users'), 
     handler: (req, res) => {
+      console.log(req.query)
+
       const users = database.select("users");
 
       return res.end(JSON.stringify(users));
@@ -32,12 +34,10 @@ export const routes = [
   }, 
   {
     method: 'PUT', 
-    path: buildRoutePath('/users/:id'), //continua recebendo o id de usuário pois quero saber qual usuário eu quero atualizar
+    path: buildRoutePath('/users/:id'),
     handler: (req,res) => {
-      //Uma constante sendo req.params e a outra req.body
       const { id } = req.params 
       const { name, email} = req.body
-      //agora o método update, passamos o id como segundo parametro, e no terceiro parametro enviamos quais informações queremos atualizar
       database.update('users', id, {
         name, 
         email
