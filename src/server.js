@@ -7,12 +7,10 @@ const server = http.createServer(async(req, res) => {
 
   await json(req, res);
 
-  // método find() em um array chamado routes para procurar um objeto que atenda a duas condições
   const route = routes.find((route) => {
     return route.method === method && route.path === url;
   });
 
-	//Caso eu encontre uma rota eu vou retornar handler passando o que ela precisa receber que é o req e res 
   if(route) {
 		return route.handler(req, res)
 	} 
