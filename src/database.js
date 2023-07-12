@@ -10,11 +10,11 @@ export class Database {
     .then(data => {
       this.#database = JSON.parse(data)
     }).catch(() => {
-      this.#persistent();
+      this.#persist();
     })
   }
 
-  #persistent(){
+  #persist(){
     fs.writeFile(databasePath, JSON.stringify(this.#database)); 
   }
 
@@ -32,8 +32,18 @@ export class Database {
       this.#database[table] = [data];
     }
 
-    this.#persistent();
+    this.#persist();
 
     return data;
+  }
+
+  delete(table, id) {
+    const rowIndex = this.#database[table].findIndex(row => row.id === id)
+
+    if (rowIndex > -1) {
+      this.#database[table].splice(rowIndex, 1)
+
+      this.#persist()
+    }
   }
 }
