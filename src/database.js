@@ -19,16 +19,13 @@ export class Database {
   }
 
   select(table, search) {
-    //Como vou alterar o valor de data será uma let
     let data = this.#database[table] ?? []
 
     if(search) {
-      //Eu quero fazer um filtro baseado no que eu enviar no search, eu quero procurar a search tanto no nome quanto no email
       data = data.filter(row => {
-        //Como search é um objeto vou começar convertendo ele para um Array e uso o método some devolve 
+
         return Object.entries(search).some(([key, value]) => {
-          //Retorno se a linha row, na propriedade key inclui o valor que estou buscando
-          return row[key].toLowerCase().includes(value.toLowerCase()); //Ele vai fazer a busca tudo por caixa baixa
+          return row[key].toLowerCase().includes(value.toLowerCase());
         })
       })
     }

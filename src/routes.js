@@ -9,12 +9,7 @@ export const routes = [
     method: 'GET', 
     path: buildRoutePath('/users'), 
     handler: (req, res) => {
-
-      //Pego o search de dento do req.query
       const { search } = req.query
-
-      //No parametro da busca eu vou enviar um objeto, nesse objeto quero buscar o name e email
-      //se existir algo dentro de search eu envio a busca pelo nome e email se não envio nullo para dentro do database
       const users = database.select("users", search ? {
         name: search, 
         email: search
